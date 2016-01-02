@@ -59,4 +59,8 @@ class MessagesController()(implicit injector: Injector, ev: EventContext) extend
     if (msg.time isAfter lastReadTime)
       zms.head.foreach { _.convsUi.setLastRead(msg.convId, msg) }
   }
+
+  def getMessage(messageId: MessageId): Signal[Option[MessageData]] = {
+    zms.flatMap(z => Signal.future(z.messagesStorage.get(messageId)))
+  }
 }
