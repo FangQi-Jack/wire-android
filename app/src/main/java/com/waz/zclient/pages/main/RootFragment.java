@@ -575,6 +575,16 @@ public class RootFragment extends BaseFragment<RootFragment.Container> implement
     }
 
     @Override
+    public void nextItemRequested() {
+
+    }
+
+    @Override
+    public void previousItemRequested() {
+
+    }
+
+    @Override
     public void onOpenCamera(CameraContext cameraContext) {
         getChildFragmentManager().beginTransaction().add(R.id.fl__root__camera,
                                                          CameraFragment.newInstance(cameraContext),

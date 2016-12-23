@@ -389,6 +389,16 @@ public class MainPhoneFragment extends BaseFragment<MainPhoneFragment.Container>
 
     }
 
+    @Override
+    public void nextItemRequested() {
+
+    }
+
+    @Override
+    public void previousItemRequested() {
+
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////
     //
     //  ConfirmationObserver
