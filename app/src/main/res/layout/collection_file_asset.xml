@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 
     Wire
     Copyright (C) 2016 Wire Swiss GmbH
@@ -18,10 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<com.waz.zclient.messages.parts.assets.AudioAssetPartView xmlns:android="http://schemas.android.com/apk/res/android"
-                                                          android:id="@+id/aapv__message_audio_asset"
-                                                          android:layout_width="match_parent"
-                                                          android:layout_height="@dimen/content__audio_message__view_height"
-                                                          android:layout_marginEnd="@dimen/content__padding_right"
-                                                          android:layout_marginStart="@dimen/content__padding_left"
+<com.waz.zclient.messages.parts.assets.FileAssetPartView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                         android:layout_width="match_parent"
+                                                         android:layout_height="@dimen/content__audio_message__view_height"
     />
