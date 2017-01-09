@@ -55,7 +55,8 @@ class WebLinkPartView(context: Context, attrs: AttributeSet, style: Int) extends
   private val message = Signal[MessageData]()
   private val content = Signal[MessageContent]()
 
-  inflate(R.layout.message_part_weblink_content)
+  def inflate(): Unit = inflate(R.layout.message_part_weblink_content)
+  inflate()
 
   val linkPreview = for {
     msg <- message
