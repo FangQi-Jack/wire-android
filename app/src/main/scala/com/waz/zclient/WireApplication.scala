@@ -17,7 +17,6 @@
  */
 package com.waz.zclient
 
-import android.content.res.Configuration
 import android.support.multidex.MultiDexApplication
 import com.waz.api.{NetworkMode, ZMessagingApi, ZMessagingApiFactory}
 import com.waz.service.{MediaManagerService, NetworkModeService, PreferenceService, ZMessaging}

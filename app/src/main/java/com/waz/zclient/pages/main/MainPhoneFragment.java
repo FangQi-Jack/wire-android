@@ -373,6 +373,11 @@ public class MainPhoneFragment extends BaseFragment<MainPhoneFragment.Container>
     @Override
     public void openCollection() {
         getChildFragmentManager().beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_from_bottom_pick_user,
+                R.anim.open_new_conversation__thread_list_out,
+                R.anim.open_new_conversation__thread_list_in,
+                R.anim.slide_out_to_bottom_pick_user)
                                  .add(R.id.fl__overlay_container,
                                       CollectionFragment.newInstance(),
                                       CollectionFragment.TAG())

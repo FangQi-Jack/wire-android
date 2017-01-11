@@ -21,8 +21,9 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.Toolbar
+import android.view.MenuItem.OnMenuItemClickListener
 import android.view.View.OnClickListener
-import android.view.{LayoutInflater, View, ViewGroup}
+import android.view.{LayoutInflater, MenuItem, View, ViewGroup}
 import android.widget.TextView
 import com.waz.ZLog._
 import com.waz.api.Message
@@ -88,9 +89,9 @@ class CollectionFragment extends BaseFragment[CollectionFragment.Container] with
   override def onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View = {
     val view = inflater.inflate(R.layout.fragment_collection, container, false)
     val name: TextView  = ViewUtils.getView(view, R.id.tv__collection_toolbar__name)
-    val contentView: TextView = ViewUtils.getView(view, R.id.tv__collection_toolbar__content)
     val recyclerView: CollectionRecyclerView = ViewUtils.getView(view, R.id.rv__collection)
     val emptyView: View = ViewUtils.getView(view, R.id.ll__collection__empty)
+    val toolbar: Toolbar = ViewUtils.getView(view, R.id.t_toolbar)
     emptyView.setVisibility(View.GONE)
 
     controller.focusedItem.on(Threading.Ui) {
@@ -105,16 +106,13 @@ class CollectionFragment extends BaseFragment[CollectionFragment.Container] with
     Signal(adapter.adapterState, controller.focusedItem, controller.conversationName).on(Threading.Ui) {
       case (AdapterState(_, _, _), Some(messageData), conversationName) =>
         name.setText(LocalDateTime.ofInstant(messageData.time, ZoneId.systemDefault()).toLocalDate.toString)
-        contentView.setText(conversationName)
       case (AdapterState(contentMode, 0, false), None, conversationName) =>
         emptyView.setVisibility(View.VISIBLE)
         recyclerView.setVisibility(View.GONE)
-        contentView.setText(textIdForContentMode(contentMode))
         name.setText(conversationName)
       case (AdapterState(contentMode, _, _), None, conversationName) =>
         emptyView.setVisibility(View.GONE)
         recyclerView.setVisibility(View.VISIBLE)
-        contentView.setText(textIdForContentMode(contentMode))
         name.setText(conversationName)
       case _ =>
     }
@@ -123,9 +121,15 @@ class CollectionFragment extends BaseFragment[CollectionFragment.Container] with
       _ => recyclerView.smoothScrollToPosition(0)
     }
 
-    val toolbar: Toolbar = ViewUtils.getView(view, R.id.t_toolbar)
-    toolbar.setNavigationOnClickListener(new OnClickListener {
-      override def onClick(v: View): Unit = onBackPressed
+    toolbar.inflateMenu(R.menu.toolbar_collection)
+    toolbar.setNavigationIcon(null)
+    toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener {
+      override def onMenuItemClick(item: MenuItem): Boolean = {
+        item.getItemId match {
+          case R.id.close => onBackPressed(); return true
+        }
+        false
+      }
     })
 
     view

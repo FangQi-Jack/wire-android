@@ -163,9 +163,9 @@ class CollectionAdapter(viewDim: Signal[Dim2], columns: Int, ctrler: ICollection
       contentMode.mutate {
         case AllContent =>
           getHeaderId(position) match {
-            case Header.mainLinks => Links
-            case Header.mainImages => Images
-            case Header.mainFiles => Files
+            case Header.mainLinks if shouldBeClickable(Header.mainLinks) => Links
+            case Header.mainImages if shouldBeClickable(Header.mainImages) => Images
+            case Header.mainFiles if shouldBeClickable(Header.mainFiles)=> Files
             case _ => AllContent
           }
         case currentMode => currentMode
@@ -272,11 +272,17 @@ class CollectionAdapter(viewDim: Signal[Dim2], columns: Int, ctrler: ICollection
     header.nameView.setText(getHeaderText(headerId))
     header.countView.setText(getHeaderCountText(headerId))
     if (contentMode.currentValue.contains(AllContent)) {
-      header.arrowView.setVisibility(View.VISIBLE)
       header.iconView.setVisibility(View.VISIBLE)
     } else {
-      header.arrowView.setVisibility(View.GONE)
       header.iconView.setVisibility(View.GONE)
+    }
+
+    if (shouldBeClickable(headerId)) {
+      header.countView.setVisibility(View.VISIBLE)
+      header.arrowView.setVisibility(View.VISIBLE)
+    } else {
+      header.countView.setVisibility(View.GONE)
+      header.arrowView.setVisibility(View.GONE)
     }
 
     val widthSpec: Int = View.MeasureSpec.makeMeasureSpec(parent.getWidth, View.MeasureSpec.EXACTLY)
@@ -306,12 +312,30 @@ class CollectionAdapter(viewDim: Signal[Dim2], columns: Int, ctrler: ICollection
   }
 
   private def getHeaderCountText(headerId: HeaderId): String = {
-    headerId match {
-      case HeaderId(HeaderType.Images, _, _) => "All " + collectionCursors(Images).fold(0)(_.count)
-      case HeaderId(HeaderType.Files, _, _) => "All " + collectionCursors(Files).fold(0)(_.count)
-      case HeaderId(HeaderType.Links, _, _) => "All " + collectionCursors(Links).fold(0)(_.count)
-      case _ => ""
+    val count = getHeaderCount(headerId)
+    if (count > 0) {
+      return "All " + count
     }
+    ""
+  }
+
+  private def getHeaderCount(headerId: HeaderId): Int = {
+    headerId match {
+      case HeaderId(HeaderType.Images, _, _) => collectionCursors(Images).fold(0)(_.count)
+      case HeaderId(HeaderType.Files, _, _) => collectionCursors(Files).fold(0)(_.count)
+      case HeaderId(HeaderType.Links, _, _) => collectionCursors(Links).fold(0)(_.count)
+      case _ => 0
+    }
+  }
+
+  private def shouldBeClickable(headerId: HeaderId): Boolean = {
+    val minCount = headerId match {
+      case HeaderId(HeaderType.Images, _, _) => AllContent.typeFilter.find(_.msgType == Message.Type.ASSET).flatMap(_.limit).getOrElse(0)
+      case HeaderId(HeaderType.Files, _, _) => AllContent.typeFilter.find(_.msgType == Message.Type.ANY_ASSET).flatMap(_.limit).getOrElse(0)
+      case HeaderId(HeaderType.Links, _, _) => AllContent.typeFilter.find(_.msgType == Message.Type.RICH_MEDIA).flatMap(_.limit).getOrElse(0)
+      case _ => 0
+    }
+    minCount > 0 && getHeaderCount(headerId) > minCount
   }
 
   private def getHeaderIcon(headerId: HeaderId): Int = {
