@@ -127,7 +127,7 @@
                 style="?messageStreamSubtitleNoColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:font="@string/wire__typeface__bold"
+                app:font="@string/wire__typeface__light"
                 />
 
         </LinearLayout>

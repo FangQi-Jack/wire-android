@@ -808,6 +808,8 @@
     <dimen name="usernames__take_over__username__bottom_padding">240dp</dimen>
     <dimen name="prefs__username_change__content_height">140dp</dimen>
 
+    <dimen name="toolbar_home_icon_width">56dp</dimen>
+
     <dimen name="collections__content_horizontal_padding">@dimen/wire__padding__20</dimen>
     <dimen name="collections__content_top_padding">24dp</dimen>
     <dimen name="collections__content_bottom_padding">24dp</dimen>

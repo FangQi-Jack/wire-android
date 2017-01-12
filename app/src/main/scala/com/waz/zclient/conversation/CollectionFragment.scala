@@ -34,6 +34,7 @@ import com.waz.zclient.controllers.collections.CollectionsObserver
 import com.waz.zclient.conversation.CollectionAdapter.AdapterState
 import com.waz.zclient.conversation.CollectionController._
 import com.waz.zclient.pages.BaseFragment
+import com.waz.zclient.ui.theme.ThemeUtils
 import com.waz.zclient.utils.ViewUtils
 import com.waz.zclient.{FragmentHelper, OnBackPressedListener, R}
 import org.threeten.bp.{LocalDateTime, ZoneId}
@@ -79,13 +80,6 @@ class CollectionFragment extends BaseFragment[CollectionFragment.Container] with
     }
   }
 
-  private def textIdForContentMode(contentType: ContentType) = contentType match {
-    case Images => R.string.collection_header_pictures
-    case Files => R.string.collection_header_files
-    case Links => R.string.collection_header_links
-    case _ => R.string.collection_header_all
-  }
-
   override def onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View = {
     val view = inflater.inflate(R.layout.fragment_collection, container, false)
     val name: TextView  = ViewUtils.getView(view, R.id.tv__collection_toolbar__name)
@@ -103,17 +97,32 @@ class CollectionFragment extends BaseFragment[CollectionFragment.Container] with
     adapter = new CollectionAdapter(recyclerView.viewDim, columns, controller)
     recyclerView.init(adapter)
 
+    def setNavigationIconVisibility(visible: Boolean) = {
+      if (visible) {
+        if (ThemeUtils.isDarkTheme(getContext)) {
+          toolbar.setNavigationIcon(R.drawable.action_back_light)
+        } else {
+          toolbar.setNavigationIcon(R.drawable.action_back_dark)
+        }
+      } else {
+        toolbar.setNavigationIcon(null)
+      }
+    }
+
     Signal(adapter.adapterState, controller.focusedItem, controller.conversationName).on(Threading.Ui) {
       case (AdapterState(_, _, _), Some(messageData), conversationName) =>
         name.setText(LocalDateTime.ofInstant(messageData.time, ZoneId.systemDefault()).toLocalDate.toString)
-      case (AdapterState(contentMode, 0, false), None, conversationName) =>
+        setNavigationIconVisibility(true)
+      case (AdapterState(AllContent, 0, false), None, conversationName) =>
         emptyView.setVisibility(View.VISIBLE)
         recyclerView.setVisibility(View.GONE)
         name.setText(conversationName)
+        setNavigationIconVisibility(false)
       case (AdapterState(contentMode, _, _), None, conversationName) =>
         emptyView.setVisibility(View.GONE)
         recyclerView.setVisibility(View.VISIBLE)
         name.setText(conversationName)
+        setNavigationIconVisibility(contentMode != AllContent)
       case _ =>
     }
 
@@ -122,16 +131,23 @@ class CollectionFragment extends BaseFragment[CollectionFragment.Container] with
     }
 
     toolbar.inflateMenu(R.menu.toolbar_collection)
-    toolbar.setNavigationIcon(null)
+
+    toolbar.setNavigationOnClickListener(new OnClickListener {
+      override def onClick(v: View): Unit = {
+        onBackPressed()
+      }
+    })
+
     toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener {
       override def onMenuItemClick(item: MenuItem): Boolean = {
         item.getItemId match {
-          case R.id.close => onBackPressed(); return true
+          case R.id.close =>
+            getControllerFactory.getCollectionsController.closeCollection()
+            return true
         }
         false
       }
     })
-
     view
   }
 
@@ -141,7 +157,7 @@ class CollectionFragment extends BaseFragment[CollectionFragment.Container] with
       case _ =>
     }
     if (!adapter.onBackPressed)
-      getControllerFactory.getCollectionsController.closeCollection
+      getControllerFactory.getCollectionsController.closeCollection()
     true
   }
 
@@ -151,17 +167,9 @@ class CollectionFragment extends BaseFragment[CollectionFragment.Container] with
 
   override def closeCollectionShare(): Unit = {}
 
-  override def previousItemRequested(): Unit =
-    controller.focusedItem mutate {
-      case Some(messageData) => None
-      case _ => None
-    }
+  override def previousItemRequested(): Unit = {}
 
-  override def nextItemRequested(): Unit =
-    controller.focusedItem mutate {
-      case Some(messageData) => None
-      case _ => None
-    }
+  override def nextItemRequested(): Unit = {}
 
   override def closeCollection(): Unit = {}
 }

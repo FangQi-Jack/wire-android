@@ -24,7 +24,7 @@
               android:layout_height="match_parent"
               android:clickable="true"
               android:orientation="vertical"
-              style="?wireBackground"
+              android:background="?wireBackgroundCollection"
     >
 
     <android.support.v7.widget.Toolbar
@@ -33,7 +33,7 @@
         android:layout_height="?attr/actionBarSize"
         android:clickable="false"
         app:contentInsetStart="@dimen/content__padding_left"
-        style="?conversationToolbar"
+        style="?collectionToolbar"
         >
 
         <com.waz.zclient.ui.text.TypefaceTextView
@@ -78,6 +78,7 @@
                 android:text="@string/glyph__collection"
                 android:textSize="@dimen/wire__text_size__insane"
                 android:padding="@dimen/wire__padding__regular"
+                android:textColor="@color/light_graphite_16"
                 />
 
             <com.waz.zclient.ui.text.TypefaceTextView

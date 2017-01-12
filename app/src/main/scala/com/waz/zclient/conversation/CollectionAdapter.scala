@@ -60,6 +60,7 @@ import com.waz.zclient.views._
 import com.waz.zclient.{Injectable, Injector, R, ViewHelper}
 import org.threeten.bp._
 import org.threeten.bp.temporal.ChronoUnit
+import com.waz.zclient.utils.ContextUtils._
 
 //For now just handling images
 class CollectionAdapter(viewDim: Signal[Dim2], columns: Int, ctrler: ICollectionsController)(implicit context: Context, injector: Injector, eventContext: EventContext) extends RecyclerView.Adapter[ViewHolder] with Injectable { adapter =>
@@ -96,12 +97,12 @@ class CollectionAdapter(viewDim: Signal[Dim2], columns: Int, ctrler: ICollection
       _ <- rc.countSignal
     } yield rc
 
-    verbose(s"Started loading for: ${contentType.toString}")
+    debug(s"Started loading for: ${contentType.toString}")
     cursor.on(Threading.Ui) { c =>
       if (!collectionCursors(contentType).contains(c)) {
         collectionCursors(contentType).foreach(_.close())
         collectionCursors(contentType) = Some(c)
-        verbose(s"Cursor loaded for: ${contentType.toString}, current mode is: ${contentMode.currentValue.toString}")
+        debug(s"Cursor loaded for: ${contentType.toString}, current mode is: ${contentMode.currentValue.toString}")
         notifier.notifyDataSetChanged()
       }
     }
@@ -296,11 +297,11 @@ class CollectionAdapter(viewDim: Signal[Dim2], columns: Int, ctrler: ICollection
 
   private def getHeaderText(headerId: HeaderId): String = {
     headerId match {
-      case HeaderId(HeaderType.Images, _, _) => "PICTURES"
-      case HeaderId(HeaderType.Files, _, _) => "FILES"
-      case HeaderId(HeaderType.Links, _, _) => "LINKS"
-      case HeaderId(HeaderType.Today, _, _) => "TODAY"
-      case HeaderId(HeaderType.Yesterday, _, _) => "YESTERDAY"
+      case HeaderId(HeaderType.Images, _, _) => getString(R.string.collection_header_pictures)
+      case HeaderId(HeaderType.Files, _, _) => getString(R.string.collection_header_files)
+      case HeaderId(HeaderType.Links, _, _) => getString(R.string.collection_header_files)
+      case HeaderId(HeaderType.Today, _, _) => getString(R.string.collection_header_today)
+      case HeaderId(HeaderType.Yesterday, _, _) => getString(R.string.collection_header_yesterday)
       case HeaderId(HeaderType.MonthName, m, y) =>
         if (LocalDateTime.now.getYear == y) {
           Month.of(m).toString
@@ -314,7 +315,7 @@ class CollectionAdapter(viewDim: Signal[Dim2], columns: Int, ctrler: ICollection
   private def getHeaderCountText(headerId: HeaderId): String = {
     val count = getHeaderCount(headerId)
     if (count > 0) {
-      return "All " + count
+      return context.getResources.getString(R.string.collection_all, count.toString)
     }
     ""
   }
@@ -403,27 +404,27 @@ object CollectionAdapter {
   class CollectionRecyclerNotifier(contentType: ContentType, adapter: CollectionAdapter) extends RecyclerNotifier{
     override def notifyDataSetChanged(): Unit = {
       if (adapter.contentMode.currentValue.contains(contentType)) {
-          verbose(s"Will notifyDataSetChanged. contentType: ${contentType.toString}, current mode is: ${adapter.contentMode.currentValue.toString}")
+        debug(s"Will notifyDataSetChanged. contentType: ${contentType.toString}, current mode is: ${adapter.contentMode.currentValue.toString}")
           adapter.notifyDataSetChanged()
       }
     }
 
     override def notifyItemRangeInserted(index: Int, length: Int): Unit = {
       if (adapter.contentMode.currentValue.contains(contentType)) {
-        verbose(s"Will notifyItemRangeInserted. contentType: ${contentType.toString}, current mode is: ${adapter.contentMode.currentValue.toString}")
+        debug(s"Will notifyItemRangeInserted. contentType: ${contentType.toString}, current mode is: ${adapter.contentMode.currentValue.toString}")
         adapter.notifyItemRangeInserted(index, length)
       }
     }
 
     override def notifyItemRangeChanged(index: Int, length: Int): Unit =
       if (adapter.contentMode.currentValue.contains(contentType)) {
-        verbose(s"Will notifyItemRangeChanged. contentType: ${contentType.toString}, current mode is: ${adapter.contentMode.currentValue.toString}")
+        debug(s"Will notifyItemRangeChanged. contentType: ${contentType.toString}, current mode is: ${adapter.contentMode.currentValue.toString}")
         adapter.notifyItemRangeChanged(index, length)
       }
 
     override def notifyItemRangeRemoved(pos: Int, count: Int): Unit =
       if (adapter.contentMode.currentValue.contains(contentType)) {
-        verbose(s"Will notifyItemRangeRemoved. contentType: ${contentType.toString}, current mode is: ${adapter.contentMode.currentValue.toString}")
+        debug(s"Will notifyItemRangeRemoved. contentType: ${contentType.toString}, current mode is: ${adapter.contentMode.currentValue.toString}")
         adapter.notifyItemRangeRemoved(pos, count)
       }
   }

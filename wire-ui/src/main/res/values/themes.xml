@@ -162,6 +162,10 @@
         <!-- Start UI Toolbar -->
         <item name="sketchToolbar">@style/sketch_toolbar</item>
 
+        <!-- Collection -->
+        <item name="wireBackgroundCollection">@color/collection_background_dark</item>
+        <item name="collectionToolbar">@style/collection_toolbar__dark</item>
+
     </style>
 
     <style name="Theme.Light" parent="@style/Theme.Design.Light.NoActionBar">
@@ -303,6 +307,10 @@
 
         <!-- Start UI Toolbar -->
         <item name="sketchToolbar">@style/sketch_toolbar</item>
+
+        <!-- Collection -->
+        <item name="wireBackgroundCollection">@color/collection_background_light</item>
+        <item name="collectionToolbar">@style/collection_toolbar__light</item>
 
     </style>
 
