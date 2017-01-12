@@ -27,7 +27,7 @@
     >
 
     <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="@dimen/wire__padding__16"
+                  android:layout_height="@dimen/wire__padding__18"
                   android:orientation="horizontal"
                   android:clipChildren="false"
                   android:clipToPadding="false"

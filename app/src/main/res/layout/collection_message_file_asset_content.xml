@@ -22,7 +22,7 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:id="@+id/content"
               android:layout_width="match_parent"
-              android:layout_height="@dimen/collections__item_view_height"
+              android:layout_height="@dimen/collections__medium_item_view_height"
               android:padding="@dimen/collections__item_inner_padding"
               android:clipToPadding="false"
               android:clipChildren="false"

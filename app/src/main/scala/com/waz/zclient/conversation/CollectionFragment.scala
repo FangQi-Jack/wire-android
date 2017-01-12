@@ -109,19 +109,18 @@ class CollectionFragment extends BaseFragment[CollectionFragment.Container] with
       }
     }
 
-    Signal(adapter.adapterState, controller.focusedItem, controller.conversationName).on(Threading.Ui) {
-      case (AdapterState(_, _, _), Some(messageData), conversationName) =>
-        name.setText(LocalDateTime.ofInstant(messageData.time, ZoneId.systemDefault()).toLocalDate.toString)
+    controller.conversationName.on(Threading.Ui){ name.setText }
+
+    Signal(adapter.adapterState, controller.focusedItem).on(Threading.Ui) {
+      case (AdapterState(_, _, _), Some(messageData)) =>
         setNavigationIconVisibility(true)
-      case (AdapterState(AllContent, 0, false), None, conversationName) =>
+      case (AdapterState(AllContent, 0, false), None) =>
         emptyView.setVisibility(View.VISIBLE)
         recyclerView.setVisibility(View.GONE)
-        name.setText(conversationName)
         setNavigationIconVisibility(false)
-      case (AdapterState(contentMode, _, _), None, conversationName) =>
+      case (AdapterState(contentMode, _, _), None) =>
         emptyView.setVisibility(View.GONE)
         recyclerView.setVisibility(View.VISIBLE)
-        name.setText(conversationName)
         setNavigationIconVisibility(contentMode != AllContent)
       case _ =>
     }

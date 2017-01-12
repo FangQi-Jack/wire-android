@@ -815,7 +815,8 @@
     <dimen name="collections__content_bottom_padding">24dp</dimen>
     <dimen name="collections__header_height">56dp</dimen>
     <dimen name="collections__image_padding">0.5dp</dimen>
-    <dimen name="collections__item_view_height">80dp</dimen>
+    <dimen name="collections__item_view_height">88dp</dimen>
+    <dimen name="collections__medium_item_view_height">80dp</dimen>
     <dimen name="collections__small_item_view_height">64dp</dimen>
     <dimen name="collections__item_top_margin">2dp</dimen>
     <dimen name="collections__web_preview_image_size">40dp</dimen>
